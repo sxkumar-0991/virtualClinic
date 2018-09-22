@@ -1,0 +1,152 @@
+{% extends "launchpad.html" %}
+
+
+ {% load static %}
+
+{% block head%}
+
+<style>
+    .login-block {
+        display: block;
+        border: 1px solid;
+        width: 80%;
+        margin: auto;
+    }
+
+    .login {
+        position: relative;
+        float: left;
+        left: 20px;
+        padding:  10px;
+        width: 32%;
+        margin: auto;
+
+    }
+    .Pics {
+        float: left;
+        padding:  20px 20px;
+    }
+    .login h3 {
+        font-weight:800;
+        font-size:30px;
+        color: black;
+        text-align: center;
+    }
+
+    p.RegistraionLink {
+        padding-top: 10px;
+    }
+
+    p.errormsg {
+        font-weight: 400;
+        font-size: 25px;
+        text-align: center;"
+    }
+
+    @media screen and (max-width: 768px) {
+        .login-block {
+            width: 90%;
+        }
+
+        .login {
+            position: relative;
+            padding: 1px;
+            width: 90%;
+            margin: auto;
+        }
+
+        .Pics {
+            display: none;
+        }
+        p.errormsg {
+            font-weight: 400; font-size: 20px;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+{% block HomeNav %}
+<a href="{% url 'accounts:index' %}" class="right"> Home</a>
+{% endblock %}
+
+{% block Content %}
+
+    {% if error_msg %}<p class="errormsg">{{error_msg}}</p>{% endif %}
+<div class="login-block">
+
+    <div class="login">
+        <h3>Sign In</h3>
+        <form class="login-form" action="{% url 'accounts:login' %}" method="post" >
+        {% csrf_token %}
+            <div class="form-group">
+                <label for="MailID"><b>Email ID</b></label>
+                 <input style="width: 90%; border-radius: 5px;" class="form-control"  type="email" placeholder="Enter Email" name="MailID" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><b>Password</b></label>
+                <input style="width: 90%; border-radius: 5px;" class="form-control" type="password" placeholder=" Enter Password" name="password" required>
+            </div>
+            <div class="form-check">
+                <button class="btn btn-primary" style="width: 90%;" type="submit">Sign In</button>
+            </div>
+        </form>
+        <p class="RegistraionLink">New to <em>smartHealth</em>, then click <a href="{% url 'accounts:register' %}">here</a> to Register and create an account with us.</p>
+    </div>
+
+    <div class="Pics">
+        <div id="myCarousel" class="carousel slide" data-interval="5000" data-ride="carousel" data-pause="hover">
+            <!-- Carousel indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+            </ol>
+            <!-- Wrapper for carousel items -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img src="{% static 'accounts/SignInPic2-640-427.jpeg' %}" alt="First Slide">
+                    <div class="carousel-caption d-none d-md-block">
+                        <div class="banner-text">
+                            <h2>This is Heaven</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{% static 'accounts/SignInPic1-640-425.jpeg' %}" alt="Second Slide">
+                    <div class="carousel-caption d-none d-md-block">
+                        <div class="banner-text">
+                            <h2>This is Heaven</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+                <!-- Carousel controls -->
+                <a class="carousel-control left" href="#myCarousel" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+        </div>
+
+    </div>
+
+
+
+</div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+    function mobileMenu() {
+        var x = document.getElementById("topNav");
+        x.classList.toggle("mobileResponsive");
+    }
+</script>
+
+{% endblock %}

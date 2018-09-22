@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>smartHealth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    {% block head %}
+    {% endblock %}
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'accounts/style.css' %}">
+
+</head>
+<body>
+
+    <div id="topNav">
+        <a href=""> get our App</a>
+        <a href="{% url 'accounts:signin' %}" class="right"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
+        <a href="" class="right"> Contact Us</a>
+        <a href="{% url 'accounts:Products' %}" class="right"> Products on Offering</a>
+        <a href="javascript:void(0);" class="MenuIcon" onclick="mobileMenu();"><img src="{% static 'accounts/hamburgerMenu.png' %}"></a>
+        {% block HomeNav %} {% endblock %}
+    </div>
+
+    <div id="content" class="container-fluid">
+        {% block Content %}
+
+        {% endblock %}
+    </div>
+
+
+{% block script %}
+
+{% endblock %}
+
+<script>
+    function mobileMenu() {
+        var x = document.getElementById("topNav");
+        x.classList.toggle("mobileResponsive");
+    }
+</script>
+
+</body>
+</html>

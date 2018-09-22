@@ -1,0 +1,52 @@
+{% extends "MasterLayout.html" %}
+
+{% load static %}
+
+{% block head %}
+<style>
+    .docInfo {
+            border: 4px #ccc solid;
+            width: 80%;
+    }
+
+    @media screen and (max-width: 768px) {
+        .docInfo {
+            padding-top: 20px;
+            width: 100%;
+        }
+    }
+</style>
+
+{% endblock %}
+
+  <!----------------------------Patient Contents ------------------------------->
+
+{% block PatientContent %}
+
+    {% if Device %}
+    <br>
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"><strong>Your Device details</strong></div>
+        <div class="panel-body">
+            <br>
+            <p>Bluetooth Pin of device: {{ deviceid }}</p>
+            <p>Manufacturing Date: {{ date }} </p>
+            <p>Product ID: {{ product_id }} </p>
+        </div>
+    </div>
+
+    <p>To view our other products click <a href="{% url 'accounts:Products' %}">here.</a></p>
+
+
+    {% else %}
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-body">
+            <br>
+            <p>Oops!!! seems like you do not have our device. Awww dear, you are missing out on lot of amazing things for your health.</p>
+            <p>In order to avail live services from our doctors we recommend you to get a device from <a href="{% url 'accounts:Products' %}">here.</a></p>
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}

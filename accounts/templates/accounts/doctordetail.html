@@ -1,0 +1,206 @@
+{% extends "MasterLayout.html" %}
+
+{% load static %}
+
+{% block head %}
+    <style>
+
+        .docInfo {
+            border: 4px #ccc solid;
+            width: 80%;
+        }
+        .ImgBox {
+            width: 200px ;
+            height:200px ;
+            float: left;
+        }
+        .ImgBox img {
+            width:100% !important;
+            border-radius: 10%;
+        }
+        .DocPrimaryInfo {
+            padding-left: 30px;
+            float: left;
+            width: 70%;
+        }
+        .DocSecondaryInfo {
+            width: 200px;
+            float: left;
+        }
+        .DocRegistrationNo {
+            padding-left: 30px;
+            width: 70%;
+            float: left;
+        }
+
+        #dots, #rdMore {
+            display: none;
+        }
+
+    @media screen and (max-width:768px) {
+        .Parent {
+            padding-top: 20px;
+        }
+
+        .docInfo {
+            width: 100%;
+        }
+
+        .ImgBox {
+            width: 85% ;
+            height:85% ;
+            padding-left: 0px;
+        }
+
+        .DocPrimaryInfo {
+            padding-left: 0px;
+            padding-top: 10px;
+            float: left;
+            width: 100%;
+        }
+        .DocSecondaryInfo {
+            width: 100%;
+            float: left;
+        }
+        .DocRegistrationNo {
+            padding-left: 0px;
+            width: 100%;
+            float: left;
+        }
+
+        #dots {
+            display: inline;
+        }
+        #rdMore {
+            padding-left: 0px;
+            background: none;
+            border: none;
+            outline: none;
+            text-decoration: underline;
+            display: block;
+        }
+        #more {
+            display: none;
+        }
+        .gpsIcon {
+            float: right;
+            padding-bottom: 0px;
+        }
+
+    }
+
+
+
+    </style>
+
+{% endblock %}
+
+{% block PatientContent %}
+
+    {% if DocSelected %}
+    <div class="alert alert-success fade in">
+            <a href="#" class="close" data-dismiss="alert">&times;</a>
+            <strong>Success!</strong> Dedicated doctor successfully assigned to you.
+        </div>
+    {% elif NoDocSelected %}
+    <div class="alert alert-danger fade in">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>Error!</strong> You did not select the doctor.
+    </div>
+    {% endif %}
+
+    <div class="panel-group Parent">
+    <div class="panel panel-default docInfo">
+        <div class="panel-body">
+        <div class="ImgBox">
+            <img src="{{ doc.image.url }}" class="img-responsive">
+        </div>
+        <div class="DocPrimaryInfo">
+            <p><strong>Dr.{{ doc.first_name }} {{ doc.last_name }}</strong></p>
+            <p>{{ doc.degree }}</p>
+            <p>{{ doc.speciality }}</p>
+            <p>{{ doc.years_of_experience }} years of experience</p>
+            <p>Age: {{ age }}</p>
+            <br>
+
+            <p>Dr.{{ doc.first_name }} {{ doc.last_name }} Is A Gynecologist And Obstetrician In Kharadi, Pune And has An Experience Of {{ doc.years_of_experience }} Years in these fields. He practices<span id="dots">...</span><span id="more"> at Dr.Swati Landge's Kalyani Clinic In Kharadi, Pune. He Completed his MBBS From B J Medical College Pune, In 2000 And DGO From College Of Physicians And Surgeons Mumbai In 2003.
+                He has his Training Experiences From Renowned Institutes Like Sassoon General Hospital, Pune And YCM Hospital, Pimpri.</span></p>
+            <button id="rdMore" onclick="readMore();"> Read more</button>
+        </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-body">
+            <div class="DocSecondaryInfo">
+                <p>Gender: {{ doc.gender }}</p>
+                <p>Based In: {{ doc.city }}</p>
+            </div>
+            <div class="DocRegistrationNo">
+                <p>Registrations: {{ doc.medical_registration_no }} Maharashtra Medical Council, 2001</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"> <strong>Clinic Information</strong></div>
+        <div class="panel-body">
+            <h4>{{ dAddress.clinic_name }}</h4>
+            <p>{{ dAddress.clinic_address }}</p>
+            <div class="gpsIcon">
+                <a href="{{ doc.getMap_url }}"><img src="{% static 'accounts/GPSIcon2.png' %}"></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-body">
+            <form action="" method="post">
+            {% csrf_token %}
+                {% if hasDoc %}
+                    <label><input type="checkbox" name="bookdoc" disabled>  Select above as my Personal Doctor </label>
+                    <div class="SelectDoc">
+                        <button type="submit" disabled> Confirm</button>
+                    </div>
+                {% else %}
+                    <label><input type="checkbox" name="bookdoc">  Select above as my Personal Doctor </label>
+                    <div class="SelectDoc">
+                        <button type="submit"> Confirm</button>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block Script%}
+
+<script>
+    function readMore() {
+        var dots = document.getElementById("dots")
+        var more = document.getElementById("more")
+        var rdMore = document.getElementById("rdMore")
+        if (rdMore.innerHTML === "Read less") {
+            dots.style.display = "inline";
+            more.style.display = "none";
+            rdMore.innerHTML = "Read more";
+        }
+        else {
+            dots.style.display = "none";
+            more.style.display = "inline";
+            rdMore.innerHTML = "Read less";
+        }
+    }
+</script>
+
+
+{% endblock %}
+
+
+
+
+

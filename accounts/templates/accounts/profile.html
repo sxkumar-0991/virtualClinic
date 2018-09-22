@@ -1,0 +1,170 @@
+{% extends "MasterLayout.html" %}
+
+{% block head %}
+    <style>
+        .docInfo, .pInfo {
+            border: 4px #ccc solid;
+            width: 80%;
+        }
+        .ImgBox{
+            width: 200px ;
+            height:200px ;
+            float: left;
+        }
+        .ImgBox img{
+            width:100% !important;
+            border-radius: 10%;
+        }
+
+        .primaryInfo1 {
+            padding-left: 30px;
+            float: left;
+            width: 35%;
+        }
+
+        primaryInfo2 {
+            padding-left: 30px;
+            float: left;
+            width: 35%;
+        }
+
+        .sysInfo1 {
+            width: 200px;
+            float: left;
+        }
+        .sysInfo2 {
+            padding-left: 30px;
+            width: 70%;
+            float: left;
+        }
+
+        @media screen and (max-width: 768px) {
+
+            .Parent {
+                padding-top: 20px;
+            }
+            .docInfo, .pInfo {
+                width: 100%;
+            }
+            .ImgBox {
+                width: 85% ;
+                height:85% ;
+                padding-left: 0px;
+            }
+            .primaryInfo1 {
+                padding-left: 0px;
+                padding-top: 10px;
+                float: left;
+                width: 100%;
+            }
+            .primaryInfo2 {
+                padding-left: 0px;
+                float: left;
+                width: 100%;
+            }
+
+            .sysInfo1 {
+                padding-left: 0px;
+                float: left;
+                width: 100%;
+            }
+            .sysInfo2 {
+                padding-left: 0px;
+                width: 100%;
+                float: left;
+            }
+        }
+    </style>
+
+{% endblock %}
+   <!-------------------------------Patient Contents---------------------------------------------->
+
+{% block PatientContent %}
+
+
+<br>
+<div class="panel-group Parent">
+    <div class="panel panel-default pInfo">
+        <div class="panel-heading"><strong>Profile Information</strong></div>
+        <div class="panel-body">
+            <div class="ImgBox">
+                <img src="{{ Patient.image.url }}" class="img-responsive">
+            </div>
+            <div class="primaryInfo1">
+
+                <p>Name: {{ Patient.first_name }} {{ Patient.last_name }}</p>
+                <p>Email ID: {{ user.email }}</p>
+                <p>Mobile Number: {{ Patient.mobileno }}</p>
+                <p>Gender: {{ Patient.gender }}</p>
+
+            </div>
+            <div class="primaryInfo2">
+                <p>Date of Birth: {{ Patient.date_of_birth }}</p>
+                <p>Age: {{ age }}</p>
+                <p>City: {{ Patient.city }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default pInfo">
+        <div class="panel-heading"><strong>System Information</strong></div>
+        <div class="panel-body">
+            <div class="sysInfo1">
+                <p>Personal Doctor: {% if Patient.doc_assigned %} <b>Is Assigned</b> {% else %} <b>Not Assigned</b> {% endif %}</p>
+                <p>Device Status: {% if Patient.has_device %} <b>Active</b> {% else %} <b>Inactive</b> {% endif %}</p>
+            </div>
+            <div class="sysInfo2">
+                <p>Member Since: <u>{{ Patient.join_date }}</u></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+     <!-------------------------------Doctor Contents---------------------------------------------->
+
+{% block DoctorContent %}
+
+    <div class="panel-group Parent">
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"><strong>Profile Information</strong></div>
+        <div class="panel-body">
+            <div class="ImgBox">
+                <img src="{{ Doctor.image.url }}" class="img-responsive">
+            </div>
+            <div class="primaryInfo1">
+                <p>Name: {{ Doctor.first_name }} {{ Doctor.last_name }}</p>
+                <p>Email ID: {{ user.email }}</p>
+                <p>Mobile Number: {{ Doctor.mobileno }}</p>
+                <p>Gender: {{ Doctor.gender }}</p>
+            </div>
+            <div class="primaryInfo2">
+                <p>Date of Birth: {{ Doctor.date_of_birth }}</p>
+                <p>Age: {{ age }}</p>
+                <p>City: {{ Doctor.city }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"><strong>System Information</strong></div>
+        <div class="panel-body">
+            <div class="sysInfo1">
+                <p>Degree: {{ Doctor.degree }}</p>
+                <p>Speciality: {{ Doctor.speciality }}</p>
+                <p>Registration Number: {{ Doctor.medical_registration_no }}</p>
+                <p>Experience: {{ Doctor.years_of_experience }} years</p>
+            </div>
+            <div class="sysInfo2">
+                <p>Your Patient count: {{ Doctor.patient_count }}</p>
+                <p>Member Since: {{ Doctor.join_date }}</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+

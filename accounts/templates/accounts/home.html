@@ -1,0 +1,641 @@
+{% extends "MasterLayout.html" %}
+
+{% block head %}
+
+<style>
+        .HealthParametersCheck {
+            margin-left: 20px;
+        }
+        .healthGraphs {
+            width: 350px;
+            height: 350px;
+            display: none;
+            float: left;
+        }
+
+        circle {
+            fill: none;
+            stroke-width: 2px;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .axis .label {
+            font-size: 10pt;
+        }
+
+        .axisLabel {
+            font-size: 8pt;
+        }
+
+        .dot {
+        fill: black;}
+
+        path {
+            fill: none;
+            stroke: blue;
+            stroke-width: 2px;
+        }
+
+        .rotatedAxisTick {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        div.tooltip {
+            position: absolute;
+            text-align: center;
+            width: 70px;
+            height: 35px;
+            padding: 2px;
+            font: 10px sans-serif;
+            font-weight: bold;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+
+ /*---------------------------Doctor Page Style-----------------------------*/
+        .pInfoPanel {
+            border: 4px #ccc solid;
+        }
+        .pName {
+            position: relative;
+            float: left
+            padding; 10px;
+        }
+        .pCity {
+            float: left
+            padding: 10px;
+        }
+/*---------------------------End of Doctor Page Style-----------------------------*/
+        @media screen and (max-width: 768px) {
+
+            .healthGraphs {
+                width: 250px;
+                height: 200px;
+                float: none;
+                left: 0px;
+            }
+
+            table, thead, tbody, th, tr, td {
+                display: block;
+            }
+
+            thead tr {
+		        position: absolute;
+		        top: -9999px;
+		        left: -9999px;
+	        }
+
+            tr { border: 1px solid #ccc; }
+	        td {
+		        /* Behave  like a "row" */
+		        border: none;
+		        border-top: 1px solid #eee;
+		        position: relative;
+		        padding-left: 50%;
+	        }
+
+	        td:before {
+		        /* Now like a table header */
+		        position: absolute;
+		        /* Top/left values mimic padding */
+		        top: 15px;
+		        left: 4px;
+		        width: 45%;
+		        padding-right: 10px;
+		        white-space: nowrap;
+		        font-weight:bold;;
+	        }
+
+	        /*
+	        Label the data
+	        */
+	        td:nth-of-type(1):before { content: "Date and Time:"; }
+	        td:nth-of-type(2):before { content: "Systolic BP:"; }
+	        td:nth-of-type(3):before { content: "Diastolic BP:"; }
+	        td:nth-of-type(4):before { content: "Heart Beat:"; }
+	        td:nth-of-type(5):before { content: "SpO2 value:"; }
+	        td:nth-of-type(6):before { content: "Body Temparature:"; }
+        }
+    </style>
+
+{% endblock %}
+
+ <!-------------------------------Patient Contents---------------------------------------------->
+
+{% block PatientContent %}
+
+        <h2>Hello {{ Patient.first_name }}</h2>
+        <br>
+
+        {% if DocAssigned and Device %}
+            <br>
+            <p>You are under medical supervision of Dr. {{ fname }} {{ lastname }}</p>
+            <p>The device that you are using was manufactured on {{ Device.year_of_manufacture }}</p>
+            <p>Below are your most recent health stats:-</p>
+            <br>
+            {% for readings in Current_Readings %}
+            <table>
+                <thead>
+                <tr>
+                    <th>Date and Time</th>
+                    <th>Systolic Blood Pressure</th>
+                    <th>Diastolic Blood Pressure</th>
+                    <th>Heart Beat</th>
+                    <th>SpO2 value</th>
+                    <th>Body Temperature</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{ readings.date_time }}</td>
+                    <td>{{ readings.blood_pressure_Systolic }}</td>
+                    <td>{{ readings.blood_pressure_Diastolic }}</td>
+                    <td>{{ readings.heart_beat }}/min</td>
+                    <td>{{ readings.SpO2 }}%</td>
+                    <td>{{ readings.body_temperature }}°C</td>
+                </tr>
+                </tbody>
+            </table>
+            {% endfor %}
+            <br>
+            <h3>See how you doing</h3>
+
+            <label class="HealthParametersCheck"><input id="chk1" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> Heart Beat</label>
+            <label class="HealthParametersCheck"><input id="chk2" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> SpO2 (Blood Oxygen Level)</label>
+            <label class="HealthParametersCheck"><input id="chk3" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> Body Temperature</label>
+            <br>
+            <svg id="HeartBeatGraph" class="healthGraphs"></svg>
+            <svg id="SpO2Graph" class="healthGraphs"></svg>
+            <svg id="TemperatureGraph" class="healthGraphs"></svg>
+
+
+        {% elif DocAssigned %}
+            <br>
+            <p>You are under medical supervision of Dr. {{ fname }} {{ lastname }}</p>
+            <p>In order     to reap total benefits of our portal we recommend you to get our device. </p>
+            <p>Your dedicated doctor will be able to service you if you use our device, as it sends your medical parameters to the doctor in real time.</p>
+            <ul>
+                <li>Get our 'smartHealth' device to measure your vital parameters and send them to your dedicated Doctor live.</li>
+            </ul>
+
+        {% elif Device %}
+            <br>
+            <p>Select a dedicated doctor for yourself who will monitor your health parameters live through your device and interact with you accordingly.</p>
+                <p>Click <a href="{% url 'accounts:searchDoc' %}">here</a> to find and select a Doctor</p>
+
+            {% else %}
+            <br>
+            <p>To avail complete benefits of our medical services we recommend you to do following things:- </p>
+            <br>
+            <ul>
+                <li>Select a dedicated doctor for yourself who will monitor your health parameters live and interact with you accordingly.</li>
+                <p>Click <a href="{% url 'accounts:searchDoc' %}">here</a> to find and select a Doctor</p>
+                <li>Get our 'smartHealth' device to measure your vital parameters and send them to your dedicated Doctor live.</li>
+            </ul>
+
+        {% endif %}
+
+
+
+{% endblock %}
+
+     <!-------------------------------Doctor Contents---------------------------------------------->
+
+{% block DoctorContent %}
+
+<h2>Hello {{ Doctor.first_name }}</h2>
+    {% if P_Count %}
+    <br>
+    <p>You are monitoring {% if P_Count < 2 %} {{ P_Count }} patient {% else %} {{ P_Count }} patients {% endif %} currently</p>
+    {% for p in Count %}
+    <div class="panel panel-default pInfoPanel">
+        <a>
+            <div class="panel-body">
+                <div class="pName">
+                    <p>{{ p.first_name }} {{ p.last_name }}</p>
+                    <p>{{ p.age }} years old</p>
+                </div>
+                <div class="pCity">
+                    <p>{{ p.city }}</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    {% endfor %}
+
+    {% else %}
+    <br>
+    <p>You are not monitoring any patient currently. We'll alert you whenever you are assigned a new patient.</p>
+    {% endif %}
+
+
+
+{% endblock %}
+
+     <!-------------------------------Scripts Section---------------------------------------------->
+
+{% block Script%}
+
+
+    <script>
+     <!------------------------- Graph script -------------------------------->
+
+
+
+       function heartBeatGraph() {
+
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
+
+       var OuterWidth = parseInt(d3.select("#HeartBeatGraph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#HeartBeatGraph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "Heart Beat";
+
+       var HeartBeatGraph = d3.select("#HeartBeatGraph")
+                                .attr("width", OuterWidth)
+                                .attr("height", OuterHeight);
+
+        var g2 = HeartBeatGraph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0,"+height+")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0,width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.heart_beat); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.heart_beat = +d.heart_beat;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.heart_beat;})]);
+
+            xAxisG2.call(xAxis2)
+                    .selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            HeartBeatGraph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            HeartBeatGraph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.heart_beat]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.heart_beat +" "+"bpm" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+            HeartBeatGraph.append("text")
+                         .attr("x", (OuterWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "5px")
+                         .style("text-decoration", "underline")
+                         .text("Heart Beats per Minute");
+
+
+        });
+    }
+
+
+    function SpO2Graph() {
+
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "SpO2 Percentage";
+
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
+
+       var OuterWidth = parseInt(d3.select("#SpO2Graph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#SpO2Graph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+
+       var SpO2Graph = d3.select("#SpO2Graph")
+                  .attr("width",OuterWidth)
+                  .attr("height",OuterHeight);
+
+        var g2 = SpO2Graph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0," + height + ")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));;
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.SpO2); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.SpO2 = +d.SpO2;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.SpO2;})]);
+
+            xAxisG2.call(xAxis2).selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            SpO2Graph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            SpO2Graph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            SpO2Graph.append("text")
+                         .attr("x", (outerWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "10px")
+                         .style("text-decoration", "underline")
+                         .text("SpO2 vs Time");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.SpO2]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.SpO2 +"%" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+        });
+    }
+
+function bodyTempGraph() {
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "Body Temp.";
+
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
+
+       var OuterWidth = parseInt(d3.select("#TemperatureGraph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#TemperatureGraph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+
+       var TemperatureGraph = d3.select("#TemperatureGraph")
+                  .attr("width",OuterWidth)
+                  .attr("height",OuterHeight);
+
+        var g2 = TemperatureGraph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0," + height + ")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));;
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.body_temperature); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.body_temperature = +d.body_temperature;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.body_temperature;})]);
+
+            xAxisG2.call(xAxis2).selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            TemperatureGraph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            TemperatureGraph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            TemperatureGraph.append("text")
+                         .attr("x", (outerWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "10px")
+                         .style("text-decoration", "underline")
+                         .text("Body Temperature");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.body_temperature]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.body_temperature +"°C" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+        });
+    }
+
+
+
+
+    function checkBoxAlert(b){
+        var x = document.getElementsByClassName('showGraphs');
+         console.log(x);
+        var i;
+        if (b.checked) {
+            if (b.id=="chk1") {
+                document.getElementById("HeartBeatGraph").style.display = "block";
+                heartBeatGraph();
+            }
+            else if (b.id=="chk2") {
+                document.getElementById("SpO2Graph").style.display = "block";
+                SpO2Graph();
+            }
+            else {
+                document.getElementById("TemperatureGraph").style.display = "block";
+                bodyTempGraph();
+            }
+        }
+        else {
+            if (b.id=="chk1") {
+                document.getElementById("HeartBeatGraph").style.display = "none";
+            }
+            else if (b.id=="chk2") {
+                document.getElementById("SpO2Graph").style.display = "none";
+            }
+            else {
+                document.getElementById("TemperatureGraph").style.display = "none";
+            }
+        }
+    }
+
+
+
+    </script>
+
+
+{% endblock %}
+
+
+

@@ -1,0 +1,29 @@
+{% extends "launchpad.html" %}
+
+{% load static %}
+
+{% block Content%}
+
+{% if DocDetailsSuccessfullySaved %}
+
+<h4> Your details are successfully saved. Last step is to provide your Clinic/Hospital's name and location on the map.</h4>
+<h4> This would help you in increasing your exclusive presence amongst new and existing patients.</h4>
+<h4> Click the below link to provide the details and don't forget to click on "Allow" button when prompted by the browser to share your location.</h4>
+<h5> <a href="{% url 'accounts:addressInfo' %}"> Address</a></h5>
+
+{% else %}
+
+    <h2>Please provide the following details</h2>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            {{ form }}
+        </table>
+        <button type="submit">Submit</button>
+    </form>
+
+{% endif %}
+
+{% endblock %}
+
+

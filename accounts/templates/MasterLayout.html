@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>smartHealth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'accounts/MasterLayout.css' %}">
+
+    {% block head %}
+
+    {% endblock %}
+
+
+</head>
+<body>
+
+          <!------------------------ Patient Layout ------------------------->
+
+{% if Patient %}
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper1">
+        <ul class="sidebar-nav">
+            <br>
+            <li style="padding:5px; color: #ddd;"><img src="{{ Patient.image.url }}" style="width: 50px"> {{ Patient.first_name }} {{ Patient.last_name }}</li>
+            <br>
+            <li><a href="{% url 'accounts:home' %}"><img src="{% static 'accounts/homepage.png' %}"> Home</a></li>
+            {% if gender %}
+            <li><a href="{% url 'accounts:profile' %}"><img src="{% static 'accounts/man.png' %}"> Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'accounts:profile' %}"><img src="{% static 'accounts/woman.png' %}"> Profile</a></li>
+            {% endif %}
+            <li><a href="{% url 'accounts:relativeinfo' %}"><img src="{% static 'accounts/relatives.png' %}"> Relative</a></li>
+            <li><a href="{% url 'accounts:doctor' %}"><img src="{% static 'accounts/doctor.png' %}"> Doctor</a></li>
+            <li><a href="{% url 'accounts:viewDevice' %}"><img src="{% static 'accounts/device.png' %}"> Device</a></li>
+            <li><a href="{% url 'accounts:searchDoc' %}"><img src="{% static 'accounts/FindDoc-Icon.png' %}"> Find Doctors</a></li>
+            <li><a href="{% url 'accounts:logout' %}"><img src="{% static 'accounts/logout.png' %}"> Logout</a></li>
+
+        </ul>
+    </div>
+
+    <!-- Page Content -->
+
+    <div id="page-content-wrapper1">
+        <button href="javascript:void(0);" class="MenuIcon" onclick="menuExpand1();"><img src="{% static 'accounts/hamburgerMenu.png' %}"></button>
+        <br>
+        <div class="container-fluid">
+
+            {% block PatientContent %}
+
+            {% endblock %}
+
+
+        </div>
+    </div>
+
+</div>
+
+{% endif %}
+
+  <!---------------------- Doctor Layout ------------------------->
+
+{% if Doctor %}
+
+<div id="wrapper1">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper2">
+        <ul class="sidebar-nav">
+            <br>
+            <li style="padding:5px; color: #ddd;"><img src="{{ Doctor.image.url }}" style="width: 50px"> {{ Doctor.first_name }} {{ Doctor.last_name }}</li>
+            <br>
+
+            <li><a href="{% url 'accounts:home' %}"><img src="{% static 'accounts/homepage.png' %}"> Home</a></li>
+            {% if gender %}
+            <li><a href="{% url 'accounts:profile' %}"><img src="{% static 'accounts/man.png' %}"> Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'accounts:profile' %}"><img src="{% static 'accounts/woman.png' %}"> Profile</a></li>
+            {% endif %}
+            <li><a href="{% url 'accounts:myPatients' %}"><img src="{% static 'accounts/relatives.png' %}"> My Patients</a></li>
+            <li><a href="{% url 'accounts:doctor' %}"><img src="{% static 'accounts/doctor.png' %}"> Patient History</a></li>
+            <li><a href="{% url 'accounts:viewDevice' %}"><img src="{% static 'accounts/device.png' %}"> Devices</a></li>
+            <li><a href="{% url 'accounts:logout' %}"><img src="{% static 'accounts/logout.png' %}"> Logout</a></li>
+
+        </ul>
+    </div>
+
+    <!-- Page Content -->
+
+    <div id="page-content-wrapper2">
+        <button href="javascript:void(0);" class="MenuIcon" onclick="menuExpand2();"><img src="{% static 'accounts/hamburgerMenu.png' %}"></button>
+        <br>
+        <div class="container-fluid">
+
+            {% block DoctorContent %}
+
+            {% endblock %}
+
+
+        </div>
+    </div>
+
+</div>
+
+
+{% endif %}
+
+{% block Script %}
+
+{% endblock %}
+
+<script>
+    function menuExpand1() {
+        var x = document.getElementById("sidebar-wrapper1");
+        x.classList.toggle("responsive");
+    }
+    function menuExpand2() {
+        var x = document.getElementById("sidebar-wrapper2");
+        x.classList.toggle("responsive");
+    }
+
+</script>
+
+</body>
+</html>

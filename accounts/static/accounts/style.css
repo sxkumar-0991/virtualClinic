@@ -1,0 +1,123 @@
+ @import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+body{
+    font-family: 'Roboto Condensed', sans-serif;
+}
+/*--------------------------My Navigation Fixed to Top-----------------------------*/
+
+#topNav {
+
+    overflow: hidden;
+    background-color: transparent;
+}
+
+
+#topNav a {
+    float: left;
+    display: block;
+    color: grey;
+    text-align: center;
+    padding: 14px 14px;
+    font-size: 17px;
+    text-decoration: none;
+}
+
+#topNav a.right {
+    float: right;
+    display: block;
+    color: grey;
+    text-align: center;
+    padding: 14px 14px;
+    font-size: 17px;
+    text-decoration: none;
+}
+
+
+
+#topNav  a:hover {
+    text-decoration: underline;
+    transform: scale(1.05,1.05);
+}
+
+#topNav .MenuIcon {
+    display: none;
+}
+
+#content {
+    padding-top: 60px;
+    width: 100%;
+}
+
+
+#landing {
+    background: #ffffff;
+}
+
+
+#landing-text {
+    display: flex;
+    flex-direction: column;
+    height: 15vh;
+    align-items: center;
+    text-align: center;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+h1{
+    font-weight: 600;
+    font-size: 4rem;
+    margin: 0;
+}
+
+#landing-text h2 {
+    font-weight: 400;
+    font-size: 2rem;
+    margin: 0;
+}
+
+
+@media screen and (max-width: 768px) {
+    #topNav a.right {
+        display: none;
+    }
+    #topNav a.MenuIcon {
+        display: block;
+        background: transparent;
+        right: 10px;
+        top: 0px;
+        position: fixed;
+    }
+    #topNav a.MenuIcon:hover {
+        transform: scale(1.05,1.05);
+    }
+}
+
+@media screen and (max-width: 768px) {
+
+    #topNav.mobileResponsive {position: relative;}
+    #topNav.mobileResponsive a.MenuIcon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    #topNav.mobileResponsive a {
+        float: none;
+        display: block;
+
+        text-align: left;
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+/*----------------------------------------------------------*/

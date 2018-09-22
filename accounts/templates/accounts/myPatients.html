@@ -1,0 +1,97 @@
+{% extends "MasterLayout.html" %}
+
+{% load static %}
+
+{% block head %}
+    <style>
+        .heading{
+            padding: 15px;
+        }
+        .pInfoPanel {
+            border: 2px #ccc solid;
+            width: 80%;
+        }
+        .ImgBox{
+            width: 160px ;
+            height: 160px ;
+            float: left;
+        }
+
+        .ImgBox img{
+            width:100% !important;
+            border-radius: 10%;
+        }
+        .pInfo1 {
+            float: left;
+            padding-left: 50px;
+        }
+        .pInfo2 {
+            float: left;
+            padding-left: 50px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .heading{
+                font-size: 20px;
+                padding: 5px;
+            }
+            .pInfoPanel {
+                width: 100%;
+            }
+            .ImgBox{
+                width: 60px ;
+                height: 60px ;
+                float: left;
+            }
+            .pInfo1 {
+                float: left;
+                padding-left: 20px;
+            }
+            .pInfo2 {
+                padding-left: 0px;
+            }
+            p.text-decor {
+                padding: 0px !important;
+                margin: 0px;
+            }
+        }
+    </style>
+
+{% endblock %}
+
+{% block DoctorContent %}
+
+{% if P_Count %}
+    <br>
+    <p><h3 class="heading">Your patient count is {{ P_Count }}</h3></p>
+    <div class="panel panel-default pInfoPanel">
+        {% for patients in Count %}
+        <a href="{{ patients.get_url }}">
+        <div class="panel-body">
+            <div class="ImgBox">
+                <img src="{{ patients.image.url }}" class="img-responsive">
+            </div>
+            <div class="pInfo1">
+                <p class="text-decor" style="color: blue;">{{ patients.first_name }} {{ patients.last_name }}</p>
+                <p class="text-decor">DOB: {{ patients.date_of_birth }} </p>
+                {% if patients.gender == "M" %}
+                    <p class="text-decor"> Male</p>
+                {% else %}
+                    <p class="text-decor"> Female</p>
+                {% endif    %}
+            </div>
+            <div class="pInfo2">
+                <p class="text-decor">City: {{ patients.city }}</p>
+                <p class="text-decor">Joined On: {{ patients.join_date|date:"d-M-y" }}</p>
+            </div>
+        </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <br>
+    <p>You are not monitoring any patient currently. We'll alert you whenever you are assigned a new patient.</p>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "launchpad.html" %}
+
+{% load static %}
+
+{% block head %}
+
+<style>
+    h2, h3 {
+        text-align: center;
+    }
+
+    .wrapper {
+       display: block;
+       text-align: center;
+    }
+    .position{
+
+        display: inline-block;
+        width: 150px;
+        padding: 20px;
+    }
+
+    @media screen and (max-width:768px) {
+        .position {
+            width: 60%;
+            padding: 20px;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+{% block Content %}
+
+    <h2><u>Aspire to Inspire You for a Healthy living</u> </h2>
+    <h3>Please select the type of account you want to create</h3>
+    <div class="wrapper">
+        <div class="position">
+            <a class="btn1" href="{% url 'accounts:patientregister' %}"><img src="{% static 'accounts/PatientRegisterIcon.png' %}"><b>  I'm a Patient</b></a>
+        </div>
+        <div class="position">
+            <a class="btn1" href="{% url 'accounts:doctorregister' %}"><img src="{% static 'accounts/DoctorRegisterIcon.png' %}"> <b>  I'm a Doctor</b></a>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+

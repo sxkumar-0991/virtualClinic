@@ -1,0 +1,118 @@
+{% extends "MasterLayout.html" %}
+
+{% load static %}
+
+{% block head %}
+
+<style>
+    .docInfo {
+            border: 4px #ccc solid;
+            width: 80%;
+    }
+    .ImgBox{
+        width: 200px ;
+        height:200px ;
+        float: left;
+    }
+    .ImgBox img{
+        width:100% !important;
+        border-radius: 10%;
+    }
+
+    .DocPrimaryInfo {
+            padding-left: 30px;
+            float: left;
+            width: 70%;
+    }
+    .DocSecondaryInfo {
+            width: 200px;
+            float: left;
+    }
+
+    @media screen and (max-width:768px) {
+        .docInfo {
+            padding-top: 20px;
+            width: 100%;
+        }
+        .ImgBox {
+            width: 85% ;
+            height:85% ;
+            padding-left: 0px;
+        }
+        .DocPrimaryInfo {
+            padding-left: 0px;
+            padding-top: 10px;
+            float: left;
+            width: 100%;
+        }
+        .DocSecondaryInfo {
+            width: 100%;
+            float: left;
+        }
+
+        .gpsIcon {
+            float: right;
+            padding-bottom: 0px;
+        }
+    }
+</style>
+
+{% endblock %}
+
+   <!-------------------------------Patient Contents---------------------------------------------->
+
+{% block PatientContent %}
+
+    {% if doc %}
+    <br>
+    <p>Information of your Personal Doctor</p>
+    <div class="panel-group Parent">
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"><strong>Personal Information</strong></div>
+        <div class="panel-body">
+            <div class="ImgBox">
+                <img src="{{ doc.image.url }}" class="img-responsive">
+            </div>
+            <div class="DocPrimaryInfo">
+                <p>Name: Dr. {{ doc.first_name }} {{ doc.last_name }}</p>
+                <p>Mobile Number: {{ doc.mobileno }}</p>
+                <p>Gender: {{ doc.gender }}</p>
+                <p>Age: {{ age }}</p>
+                <p>City: {{ doc.city }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"><strong>Professional Information</strong></div>
+        <div class="panel-body">
+            <p>Degree: {{ doc.degree }}</p>
+            <p>Speciality: {{ doc.speciality }}</p>
+            <p>Registrations: {{ doc.medical_registration_no }} Maharashtra Medical Council, 2001</p>
+            <p>Practice Experience: {{ doc.years_of_experience }} years</p>
+        </div>
+    </div>
+
+    <div class="panel panel-default docInfo">
+        <div class="panel-heading"> <strong>Clinic Information</strong></div>
+        <div class="panel-body">
+            <h4>{{ dAddress.clinic_name }}</h4>
+            <p>{{ dAddress.clinic_address }}</p>
+            <div class="gpsIcon">
+                <a href="{{ doc.getMap_url }}"><img src="{% static 'accounts/GPSIcon2.png' %}"></a>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% else %}
+    <div class="panel panel-default docInfo">
+        <div class="panel-body">
+            <p>No dedicated Doctor selected yet.</p>
+            <br>
+            <p>Click <a href="{% url 'accounts:searchDoc' %}">here</a> to find and select a Doctor</p>
+            </div>
+    </div>
+    {% endif %}
+
+
+{% endblock %}
