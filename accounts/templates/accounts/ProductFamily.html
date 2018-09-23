@@ -1,5 +1,7 @@
 {% extends "launchpad.html" %}
 
+{% load static %}
+
 {% block head %}
 
     <script type="text/javascript">
@@ -10,15 +12,34 @@
     });
     </script>
     <style>
+        .Pics {
+            display: block;
+            margin: auto;
+            width: 800px;
+        }
         .carousel-buttons {
             position: absolute;
-            width: 100%;
-            color:#fff;
+            width: 100% !important;
             bottom:1px;
+            outline: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            font-weight: 200
         }
-        .carousel-buttons > div {
-             padding:20px;
+        .carousel-buttons a.btn {
+            font-size: 20px;
+            font-weight: 200
+        }
+        a.btn:hover {
+            text-decoration: none;
+        }
 
+
+        @media screen and (max-width: 768px) {
+            .Pics {
+                width: 100%;
+            }
         }
 
 
@@ -37,24 +58,33 @@
 
     {% if logout %} <p align="right"><a href="{% url 'accounts:logout' %}">{{ logout }}</a></p> {% endif %}
     {% if Success %} <p><strong> {{ Success }} </strong></p>{% endif %}
+    {% if alreadyHaveaDevice %} <p><strong> You already bought this.</strong></p> {% endif %}
+
+    <h4><center><b>Product range</b></center></h4>
     <br>
-    <p><center><b>Product range</b></center></p>
-    <br>
-    {% if Hi %}
+    {% if Authenticated %}
+
     <form action="" method="post">
         {% csrf_token %}
-    <div id="myCarousel" class="carousel slide" data-interval="5000" data-ride="carousel" data-pause="hover">
+    <div class="Pics">
+    <div id="myCarousel" class="carousel slide" data-interval="7000" data-ride="carousel" data-pause="hover">
         <div class="carousel-inner ">
             <div class="item active" content="center">
-                <img class="img-responsive" src="{% static 'accounts/Product-1-1280-853.jpeg' %}" alt="First Slide">
-                <div class="hover-slide carousel-buttons">
-                    <button class="col-xs-12 col-md-12 text-center btn" type="submit" name="buy"><a><b>Buy {{ Hi }}</b></a></button>
+                <img class="img-responsive" src="{% static 'accounts/BP-800-500.jpeg' %}" alt="First Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons" type="submit" name="buy"><a><b> Buy</b></a></button>
                 </div>
              </div>
             <div class="item">
-                <img class="img-responsive" src="{% static 'accounts/Product-2-1280-853.jpeg' %}" alt="Second Slide">
-                <div class="hover-slide carousel-buttons">
-                    <button class="col-xs-12 col-md-12 text-center btn" type="submit" name="buy"><a><b>Buy</b></a></button>
+                <img class="img-responsive" src="{% static 'accounts/Medicines-800-500.jpeg' %}" alt="Second Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons" type="submit" name="buy"><a><b> Buy</b></a></button>
+                </div>
+            </div>
+            <div class="item">
+                <img class="img-responsive" src="{% static 'accounts/Product3-800-500.jpeg' %}" alt="Third Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons" type="submit" name="buy"><a><b> Buy</b></a></button>
                 </div>
             </div>
         </div>
@@ -66,23 +96,38 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
     </div>
+    </div>
     </form>
+    <br>
+    <h5>Model Number: HKFH1909</h5>
+    <h5><p>The device provides continuous, non-invasive monitoring of oxygen saturation of haemoglobin in your blood. It helps
+        doctors to assess the safety of physical activity and alerts them of dangerous Oxygen levels.</p></h5>
 
-    {% elif Hello %}
-    <div id="myCarousel-2" class="carousel slide" data-interval="5000" data-ride="carousel" data-pause="hover">
+
+    {% elif Not_Authenticated %}
+
+    <div class="Pics">
+    <div id="myCarousel-2" class="carousel slide" data-interval="7000" data-ride="carousel" data-pause="hover">
         <div class="carousel-inner ">
-            <div class="item active" content="center">
-                <img class="img-responsive" src="{% static 'accounts/Product-1-1280-853.jpeg' %}" alt="First Slide">
-                <div class="hover-slide carousel-buttons">
-                    <button class="col-xs-12 col-md-12 text-center btn"><a href="#" class=" btn " data-toggle="popover" tabindex="0" data-trigger="focus"
-                       data-content="You need to Sign In to buy this device."> Buy</a></button>
+            <div class="item active">
+                <img class="img-responsive" src="{% static 'accounts/BP-800-500.jpeg' %}" alt="First Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons"><a href="#" class="btn" data-toggle="popover" tabindex="0" data-trigger="focus"
+                       data-content="You need to Sign In to buy this device"> Buy</a></button>
                 </div>
 
              </div>
             <div class="item">
-                <img class="img-responsive" src="{% static 'accounts/Product-2-1280-853.jpeg' %}" alt="Second Slide">
-                <div class="hover-slide carousel-buttons">
-                    <button class="col-xs-12 col-md-12 text-center btn"><a href="#" class=" btn " data-toggle="popover" tabindex="0" data-trigger="focus"
+                <img class="img-responsive" src="{% static 'accounts/Medicines-800-500.jpeg' %}" alt="Second Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons"><a href="#" class="btn" data-toggle="popover" tabindex="0" data-trigger="focus"
+                       data-content="You need to Sign In to buy this device"> Buy</a></button>
+                </div>
+            </div>
+            <div class="item">
+                <img class="img-responsive" src="{% static 'accounts/Product3-800-500.jpeg' %}" alt="Third Slide">
+                <div class="hover-slide">
+                    <button class="carousel-buttons"><a href="#" class="btn" data-toggle="popover" tabindex="0" data-trigger="focus"
                        data-content="You need to Sign In to buy this device"> Buy</a></button>
                 </div>
             </div>
@@ -95,6 +140,12 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </a>
     </div>
+    </div>
+
+    <br>
+    <h4>Model Number: HKFH1909</h4>
+    <h5><p>The device provides continuous, non-invasive monitoring of oxygen saturation of haemoglobin in your blood. It helps
+        doctors to assess the safety of physical activity and alerts them of dangerous Oxygen levels.</p></h5>
 
     {% endif %}
 
@@ -110,10 +161,3 @@
 </script>
 
 {% endblock %}
-
-
-
-</div>
-</main>
-</body>
-</html>

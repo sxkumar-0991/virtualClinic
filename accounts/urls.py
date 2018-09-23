@@ -22,8 +22,8 @@ urlpatterns = [
     path('doctor/',views.assigned_doctor, name='doctor'),
     path('device/',views.view_device, name='viewDevice'),
     path('products/', views.view_products, name='Products'),
-    path('api/get_Readings_data_as_json_fromDB', views.get_Readings_data_as_json_fromDB, name='get_Readings_data_as_json_fromDB'),
     path('mypatients/', views.myPatients, name='myPatients'),
     path('patient-detail/<int:id>', views.patientDetail, name='patientdetail'),
+    path('api/get_Patient_Readings_data_as_json_fromDB/<int:id>', views.get_Patient_Readings_data_as_json_fromDB, name='get_Patient_Readings_data_as_json_fromDB')
 
 ]

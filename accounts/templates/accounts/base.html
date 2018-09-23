@@ -2,6 +2,35 @@
 
 {% load static %}
 
+{% block head %}
+
+<style>
+    .pic {
+        display: block;
+        margin: auto;
+        width: 1100px;
+        overflow: hidden;
+    }
+    video {
+        width: 1100px;
+        height: 610px;
+    }
+
+    @media screen and (max-width:768px) {
+        .pic {
+            width: 100%;
+            height: 202px;
+            overflow: hidden;
+        }
+        video {
+            width: 360px;
+            height: auto;
+        }
+    }
+</style>
+
+{% endblock %}
+
 {% block Content %}
 
     <div align="center">
@@ -15,7 +44,8 @@
         </div>
     </div>
 
-    <div id="myCarousel" class="carousel slide" data-interval="5000" data-ride="carousel" data-pause="hover">
+<div class="pic">
+    <div id="myCarousel" class="carousel slide" data-interval="10000" data-ride="carousel" data-pause="hover">
         <!-- Carousel indicators -->
         <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -25,13 +55,16 @@
         <!-- Wrapper for carousel items -->
         <div class="carousel-inner">
             <div class="item active">
-                <img src="{% static 'accounts/Medium-pexels-photo.jpeg' %}" alt="First Slide">
+                <video loop autoplay muted>
+                    <source src="{% static 'accounts/hd0204.mp4' %}" type="video/mp4">
+                    Your browser does not support Video.
+                </video>
             </div>
             <div class="item">
-                <img src="{% static 'accounts/Medium-pexels-photo-2.jpeg' %}" alt="Second Slide">
+                <img src="{% static 'accounts/pexel2-1100-610.jpeg' %}" alt="Second Slide">
             </div>
             <div class="item">
-                <img src="{% static 'accounts/Medium-pexels-photo-3.jpeg' %}" alt="Third Slide">
+                <img src="{% static 'accounts/pexel3-1100-610.jpeg' %}" alt="Third Slide">
             </div>
             </div>
                 <!-- Carousel controls -->
@@ -42,7 +75,7 @@
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </a>
         </div>
-
+</div>
 
 
 {% endblock %}

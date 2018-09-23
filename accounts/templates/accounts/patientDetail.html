@@ -6,76 +6,474 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <style>
-        #map-canvas {
-            padding-top: 20px;
-            height: 500px;
+        .HealthParametersCheck {
+            margin-left: 20px;
+        }
+        .healthGraphs {
+            width: 350px;
+            height: 350px;
+            display: none;
+            float: left;
         }
 
+        circle {
+            fill: none;
+            stroke-width: 2px;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+
+        .axis .label {
+            font-size: 10pt;
+        }
+
+        .axisLabel {
+            font-size: 8pt;
+        }
+
+        .dot {
+        fill: black;}
+
+        path {
+            fill: none;
+            stroke: blue;
+            stroke-width: 2px;
+        }
+
+        .rotatedAxisTick {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        div.tooltip {
+            position: absolute;
+            text-align: center;
+            width: 70px;
+            height: 35px;
+            padding: 2px;
+            font: 10px sans-serif;
+            font-weight: bold;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+
         @media screen and (max-width: 768px) {
-           #map-canvas {
-                padding-top: 20px;
-                width: 100%;
-                height: 50vh;
-           }
+           .healthGraphs {
+                width: 250px;
+                height: 200px;
+                float: none;
+                left: 0px;
+            }
+
         }
     </style>
 {% endblock %}
 
 {% block DoctorContent %}
-<br>
-<div id="map-canvas"></div>
+    <br>
+    <h3>{{ mypatient.first_name}} {{ mypatient.last_name }}, Age: {{ mypatientAge }}</h3>
+    <br>
+    <h4> Click on any parameter to monitor it:</h4>
+
+    <label class="HealthParametersCheck"><input id="chk1" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> Heart Beat</label>
+    <label class="HealthParametersCheck"><input id="chk2" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> SpO2 (Blood Oxygen Level)</label>
+    <label class="HealthParametersCheck"><input id="chk3" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> Body Temperature</label>
+    <br>
+    <svg id="HeartBeatGraph" class="healthGraphs"></svg>
+    <svg id="SpO2Graph" class="healthGraphs"></svg>
+    <svg id="TemperatureGraph" class="healthGraphs"></svg>
+
 
 {% endblock %}
 
 {% block Script %}
 
 <script type="text/javascript">
-        var map, infoWindow, marker;
+    function heartBeatGraph() {
 
-        function initialize() {
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
 
-            infoWindow = new google.maps.InfoWindow;
-            var mapOptions = {
-                zoom: 15,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                mapTypeControl: false,
-                streetViewControl: false,
-                rotateControl: false,
-                fullscreenControl: false,
-                zoomControl: false
-            };
-            map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-            if(navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-                    infoWindow.setPosition(pos);
-                    infoWindow.setContent("My Location");
-                    infoWindow.open(map);
-                    map.setCenter(pos);
-                    marker = new google.maps.Marker({position:pos, map:map});
-                }, function() {
-                    handleLocationError(true, infoWindow, map.getCenter());
+       var OuterWidth = parseInt(d3.select("#HeartBeatGraph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#HeartBeatGraph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "Heart Beat";
+
+       var HeartBeatGraph = d3.select("#HeartBeatGraph")
+                                .attr("width", OuterWidth)
+                                .attr("height", OuterHeight);
+
+        var g2 = HeartBeatGraph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0,"+height+")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0,width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.heart_beat); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{{ mypatient.get_json_data }}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.heart_beat = +d.heart_beat;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.heart_beat;})]);
+
+            xAxisG2.call(xAxis2)
+                    .selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            HeartBeatGraph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            HeartBeatGraph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.heart_beat]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.heart_beat +" "+"bpm" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
                 });
+
+            HeartBeatGraph.append("text")
+                         .attr("x", (OuterWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "5px")
+                         .style("text-decoration", "underline")
+                         .text("Heart Beats per Minute");
+
+
+        });
+    }
+
+
+    function SpO2Graph() {
+
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "SpO2 Percentage";
+
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
+
+       var OuterWidth = parseInt(d3.select("#SpO2Graph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#SpO2Graph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+
+       var SpO2Graph = d3.select("#SpO2Graph")
+                  .attr("width",OuterWidth)
+                  .attr("height",OuterHeight);
+
+        var g2 = SpO2Graph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0," + height + ")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));;
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.SpO2); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{{ mypatient.get_json_data }}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.SpO2 = +d.SpO2;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.SpO2;})]);
+
+            xAxisG2.call(xAxis2).selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            SpO2Graph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            SpO2Graph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            SpO2Graph.append("text")
+                         .attr("x", (outerWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "10px")
+                         .style("text-decoration", "underline")
+                         .text("SpO2 vs Time");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.SpO2]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.SpO2 +"%" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+        });
+    }
+
+function bodyTempGraph() {
+
+       var xAxisLabelText2 = "Date";
+       var yAxisLabelText2 = "Body Temp.";
+
+       var margin = {top: 30, right: 30, bottom: 30, left: 35}
+
+       var OuterWidth = parseInt(d3.select("#TemperatureGraph").style('width'), 10);
+       var OuterHeight = parseInt(d3.select("#TemperatureGraph").style('height'), 10);
+
+       var width = OuterWidth- margin.left - margin.right;
+       var height = OuterHeight- margin.top - margin.bottom;
+
+
+       var TemperatureGraph = d3.select("#TemperatureGraph")
+                  .attr("width",OuterWidth)
+                  .attr("height",OuterHeight);
+
+        var g2 = TemperatureGraph.append("g")
+                .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+        var path = g2.append("path");
+
+        var xAxisG2 = g2.append("g").attr("class","x axis").attr("transform","translate(0," + height + ")");
+        var yAxisG2 = g2.append("g").attr("class","y axis");
+
+        var parseTime = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+
+        var xScale2 = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var yScale2 = d3.scaleLinear().range([height, 0]);
+
+        var xAxis2 = d3.axisBottom(xScale2).tickFormat(d3.timeFormat("%d-%m"));;
+        var yAxis2 = d3.axisLeft(yScale2);
+
+        var line = d3.line()
+                   .x(function (d) {return xScale2(d.date_time); })
+                   .y(function (d) {return yScale2(d.body_temperature); })
+                   .curve(d3.curveMonotoneX);
+
+        var tooltip = d3.select("body").append("div")
+                       .attr("class", "tooltip")
+                       .style("opacity", 0);
+
+        var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
+
+
+        d3.json("{{ mypatient.get_json_data }}", function(error, data) {
+
+            if (error) throw error;
+
+            console.log(data);
+
+            data.forEach(function(d) {
+                d.date_time = parseTime(d.date_time);
+                d.body_temperature = +d.body_temperature;
+            });
+
+            console.log(data);
+
+            xScale2.domain(data.map(function (d) { return d.date_time; }));
+            yScale2.domain([0, d3.max(data, function (d) { return d.body_temperature;})]);
+
+            xAxisG2.call(xAxis2).selectAll("text")
+                    .attr("dx", "-0.6em")
+                    .attr("dy", "0.8em")
+                    .attr("transform", "rotate(-21)" ).attr("class", "rotatedAxisTick");
+
+            yAxisG2.call(yAxis2);
+
+            TemperatureGraph.append("text").attr("transform","translate("+ (OuterWidth/2) +","+ (height+margin.bottom+30) +")")
+                             .style("text-anchor","middle")
+                             .text(xAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            TemperatureGraph.append("text").attr("transform","rotate(-90)")
+                             .attr("y",0)
+                             .attr("x",0-(OuterHeight/2))
+                             .attr("dy","1em")
+                             .style("text-anchor","middle")
+                             .text(yAxisLabelText2)
+                             .attr("class","axisLabel");
+
+            TemperatureGraph.append("text")
+                         .attr("x", (outerWidth/2))
+                         .attr("y", 0-(margin.top/2))
+                         .attr("text-anchor", "middle")
+                         .style("font-size", "10px")
+                         .style("text-decoration", "underline")
+                         .text("Body Temperature");
+
+            path.attr("d", line(data));
+
+            g2.selectAll(".dot")
+                .data(data)
+                .enter().append("circle")
+                .attr("cx",function (d) { return xScale2([d.date_time]);})
+                .attr("cy", function(d) {return yScale2([d.body_temperature]);})
+                .attr("r", 4)
+                .attr("class", "dot")
+                .on("mouseover", function (d) {
+                    tooltip.transition().duration(200).style("opacity", 1);
+                    tooltip.html(d.body_temperature +"°C" + "<br/>" + tooltipTime(d.date_time))
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY-30)+ "px");
+                })
+                .on("mouseout", function (d) {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+        });
+    }
+
+
+
+
+    function checkBoxAlert(b){
+        var x = document.getElementsByClassName('showGraphs');
+         console.log(x);
+        var i;
+        if (b.checked) {
+            if (b.id=="chk1") {
+                document.getElementById("HeartBeatGraph").style.display = "block";
+                heartBeatGraph();
+            }
+            else if (b.id=="chk2") {
+                document.getElementById("SpO2Graph").style.display = "block";
+                SpO2Graph();
             }
             else {
-                handleLocationError(false, infoWindow, map.getCenter());
+                document.getElementById("TemperatureGraph").style.display = "block";
+                bodyTempGraph();
             }
         }
-
-        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-            infoWindow.setPosition(pos);
-            infoWindow.setContent(browserHasGeolocation ? 'Error: The Geolocation service failed.' :
-                                  'Error: Your browser doesn\'t support geolocation.');
-            infoWindow.open(map);
+        else {
+            if (b.id=="chk1") {
+                document.getElementById("HeartBeatGraph").style.display = "none";
+            }
+            else if (b.id=="chk2") {
+                document.getElementById("SpO2Graph").style.display = "none";
+            }
+            else {
+                document.getElementById("TemperatureGraph").style.display = "none";
+            }
         }
-    </script>
+    }
 
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initialize">
-    </script>
+
+</script>
+
+
 
 
 {% endblock %}

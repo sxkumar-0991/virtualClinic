@@ -150,6 +150,9 @@ class Patient(models.Model):
     def get_url(self):
         return reverse('accounts:patientdetail', args=[str(self.id)])
 
+    def get_json_data(self):
+        return reverse('accounts:get_Patient_Readings_data_as_json_fromDB' , args=[str(self.id)])
+
     def __str__(self):
         """
         String for representing the model object.

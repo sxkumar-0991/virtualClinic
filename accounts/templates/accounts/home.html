@@ -172,7 +172,7 @@
             </table>
             {% endfor %}
             <br>
-            <h3>See how you doing</h3>
+            <h3>See your stats in real time</h3>
 
             <label class="HealthParametersCheck"><input id="chk1" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> Heart Beat</label>
             <label class="HealthParametersCheck"><input id="chk2" type="checkbox" class="showGraphs" onchange="checkBoxAlert(this);" /> SpO2 (Blood Oxygen Level)</label>
@@ -186,7 +186,7 @@
         {% elif DocAssigned %}
             <br>
             <p>You are under medical supervision of Dr. {{ fname }} {{ lastname }}</p>
-            <p>In order     to reap total benefits of our portal we recommend you to get our device. </p>
+            <p>In order to reap total benefits of our portal we recommend you to get our device. </p>
             <p>Your dedicated doctor will be able to service you if you use our device, as it sends your medical parameters to the doctor in real time.</p>
             <ul>
                 <li>Get our 'smartHealth' device to measure your vital parameters and send them to your dedicated Doctor live.</li>
@@ -302,7 +302,7 @@
         var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
 
 
-        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+        d3.json("{{ Patient.get_json_data }}", function(error, data) {
 
             if (error) throw error;
 
@@ -418,7 +418,7 @@
         var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
 
 
-        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+        d3.json("{{ Patient.get_json_data }}", function(error, data) {
 
             if (error) throw error;
 
@@ -530,7 +530,7 @@ function bodyTempGraph() {
         var tooltipTime = d3.timeFormat("%d-%m-%y, %H:%M");
 
 
-        d3.json("{% url 'accounts:get_Readings_data_as_json_fromDB' %}", function(error, data) {
+        d3.json("{{ Patient.get_json_data }}", function(error, data) {
 
             if (error) throw error;
 
