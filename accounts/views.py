@@ -103,7 +103,7 @@ def detail_info(request):
                 doctor.city = form.cleaned_data['city']
                 doctor.image = form.cleaned_data['Profile_pic']
                 doctor.join_date = datetime.today().date()
-                doctor.degree = form.cleaned_data['degrees']
+                doctor.degree = form.cleaned_data['degree']
                 doctor.medical_registration_no = form.cleaned_data['medical_registration_no']
 
                 doctor.save()
@@ -205,11 +205,15 @@ def home(request):
                     readings = Readings.objects.filter(patient_id_id=1)
                     Current_Readings = []
                     for rd in readings:
-                        if rd.date_time > patient.last_access:
-                            Current_Readings.extend([rd])
+                        if patient.last_access is not None:
+                            if rd.date_time > patient.last_access:
+                                Current_Readings.extend([rd])
 
-                            return render(request, 'accounts/home.html',
+                                return render(request, 'accounts/home.html',
                                 {'Patient': patient, 'gender': gender, 'DocAssigned':doc ,'Device': device, 'fname':doc.first_name, 'lastname':doc.last_name, 'Current_Readings':Current_Readings})
+                        else:
+                            return render(request, 'accounts/home.html',
+                                {'Patient': patient, 'gender': gender, 'DocAssigned':doc ,'Device': device, 'fname':doc.first_name, 'lastname':doc.last_name, 'NoCurrent_Readings':"NoCurrent_Readings"})
 
 
             else:

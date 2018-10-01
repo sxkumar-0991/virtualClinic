@@ -22,6 +22,7 @@
         <a href="{% url 'accounts:signin' %}" class="right"><span class="glyphicon glyphicon-log-in"></span> Sign In</a></li>
         <a href="" class="right"> Contact Us</a>
         <a href="{% url 'accounts:Products' %}" class="right"> Products on Offering</a>
+        <a href="{% url 'accounts:logout' %}" class="right"> Logout</a>
         <a href="javascript:void(0);" class="MenuIcon" onclick="mobileMenu();"><img src="{% static 'accounts/hamburgerMenu.png' %}"></a>
         {% block HomeNav %} {% endblock %}
     </div>

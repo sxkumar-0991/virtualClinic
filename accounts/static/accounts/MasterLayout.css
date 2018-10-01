@@ -68,6 +68,7 @@
         background: transparent;
         left: 10px;
         position: fixed;
+
     }
     .MenuIcon:hover {
         transform: scale(1.05,1.05);

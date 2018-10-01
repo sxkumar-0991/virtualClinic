@@ -70,7 +70,7 @@ admin.site.unregister(Group)
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
     list_display = ('patient_id', 'first_name', 'doctor')
-    fieldsets = (('General Information', {'fields': ('patient_id', 'first_name', 'last_name', 'mobileno', 'date_of_birth', 'age','gender', 'city')}),
+    fieldsets = (('General Information', {'fields': ('patient_id', 'first_name', 'last_name', 'mobileno', 'date_of_birth', 'gender', 'city')}),
                  ('Doctor Information', {'fields': ('doc_assigned', 'doctor')}), ('Device Information', {'fields':('has_device',)}))
 
 

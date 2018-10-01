@@ -9,11 +9,15 @@
     width: 200px ;
     height:200px ;
     float: left;
+    overflow: hidden;
+    position: relative;
 }
 
 .ImgBox img{
-    width:100% !important;
-    border-radius: 10%;
+    min-width: 100%;
+    min-height: 100%;
+    border-radius: 0%;
+    position: absolute;
 
 }
 
@@ -95,8 +99,11 @@ button[type=submit] {
     .ImgBox{
         width: 170px ;
         height:170px ;
+        overflow: hidden;
+        position: relative;
     }
     .DocDetails{
+        padding-top: 10px;
         padding-left: 0px;
         width: 250px;
     }
@@ -108,8 +115,10 @@ button[type=submit] {
         width: 180px;
     }
     #myInput {
+        display: block;
         height: 30px;
         padding: 3px;
+        margin: auto;
     }
 
     button[type=submit] {
@@ -177,7 +186,7 @@ button[type=submit] {
 {% endblock %}
 
 
-{% block Script%}
+{% block Script %}
 
 <script>
 function autocomplete(inp, arr) {
@@ -282,6 +291,30 @@ var speciality = ["Audiologist", "Allergist", "Dermatologist", "Endocrinologist"
 
 /*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
 autocomplete(document.getElementById("myInput"), speciality);
+
+function centerImage(img) {
+    var container = img.parentNode;
+    if (img.offsetHeight > container.clientHeight &&
+        img.offsetWidth > container.clientWidth) {
+        img.style.minHeight = "0";
+        img.style.minWidth = "0";
+        img.style.height = "100%";
+        if (img.offsetWidth < container.clientWidth) {
+            img.style.height = "";
+            img.style.width = "100%";
+        }
+    }
+    img.style.top = ((container.offsetHeight - img.offsetHeight) / 2) + "px";
+    img.style.left = ((container.offsetWidth - img.offsetWidth) / 2) + "px";
+}
+
+onload = function(){
+    for (var i = 0; i < document.images.length; i++) {
+        centerImage(document.images[i]);
+    }
+};
+
+
 </script>
 
 

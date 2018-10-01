@@ -15,11 +15,15 @@
             width: 160px ;
             height: 160px ;
             float: left;
+            overflow: hidden;
+            position: relative;
         }
 
         .ImgBox img{
-            width:100% !important;
-            border-radius: 10%;
+            min-width: 100%;
+            min-height: 100%;
+            border-radius: 0%;
+            position: absolute;
         }
         .pInfo1 {
             float: left;
@@ -41,7 +45,8 @@
             .ImgBox{
                 width: 60px ;
                 height: 60px ;
-                float: left;
+                overflow: hidden;
+                position: relative;
             }
             .pInfo1 {
                 float: left;
@@ -94,4 +99,27 @@
     <p>You are not monitoring any patient currently. We'll alert you whenever you are assigned a new patient.</p>
     {% endif %}
 
+{% endblock %}
+
+{% block Script %}
+    <script>
+        function centerImage(img) {
+    var container = img.parentNode;
+    if (img.offsetHeight > container.clientHeight &&
+        img.offsetWidth > container.clientWidth) {
+        img.style.minHeight = "0";
+        img.style.minWidth = "0";
+        img.style.height = "100%";
+        if (img.offsetWidth < container.clientWidth) {
+            img.style.height = "";
+            img.style.width = "100%";
+        }
+    }
+    img.style.top = ((container.offsetHeight - img.offsetHeight) / 2) + "px";
+    img.style.left = ((container.offsetWidth - img.offsetWidth) / 2) + "px";
+}
+
+centerImage(img);
+
+    </script>
 {% endblock %}

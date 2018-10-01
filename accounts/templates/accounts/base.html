@@ -23,7 +23,7 @@
             overflow: hidden;
         }
         video {
-            width: 360px;
+            width: 100%;
             height: auto;
         }
     }
@@ -55,7 +55,7 @@
         <!-- Wrapper for carousel items -->
         <div class="carousel-inner">
             <div class="item active">
-                <video loop autoplay muted>
+                <video autoplay muted loop controls>
                     <source src="{% static 'accounts/hd0204.mp4' %}" type="video/mp4">
                     Your browser does not support Video.
                 </video>

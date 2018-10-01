@@ -95,8 +95,8 @@
 
             thead tr {
 		        position: absolute;
-		        top: -9999px;
-		        left: -9999px;
+		        top: -9998px;
+		        left: -9998px;
 	        }
 
             tr { border: 1px solid #ccc; }
@@ -145,32 +145,38 @@
             <br>
             <p>You are under medical supervision of Dr. {{ fname }} {{ lastname }}</p>
             <p>The device that you are using was manufactured on {{ Device.year_of_manufacture }}</p>
+
+            {% if Current_Readings %}
             <p>Below are your most recent health stats:-</p>
             <br>
-            {% for readings in Current_Readings %}
-            <table>
-                <thead>
-                <tr>
-                    <th>Date and Time</th>
-                    <th>Systolic Blood Pressure</th>
-                    <th>Diastolic Blood Pressure</th>
-                    <th>Heart Beat</th>
-                    <th>SpO2 value</th>
-                    <th>Body Temperature</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{{ readings.date_time }}</td>
-                    <td>{{ readings.blood_pressure_Systolic }}</td>
-                    <td>{{ readings.blood_pressure_Diastolic }}</td>
-                    <td>{{ readings.heart_beat }}/min</td>
-                    <td>{{ readings.SpO2 }}%</td>
-                    <td>{{ readings.body_temperature }}°C</td>
-                </tr>
-                </tbody>
-            </table>
-            {% endfor %}
+                {% for readings in Current_Readings %}
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Date and Time</th>
+                        <th>Systolic Blood Pressure</th>
+                        <th>Diastolic Blood Pressure</th>
+                        <th>Heart Beat</th>
+                        <th>SpO2 value</th>
+                        <th>Body Temperature</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ readings.date_time }}</td>
+                        <td>{{ readings.blood_pressure_Systolic }}</td>
+                        <td>{{ readings.blood_pressure_Diastolic }}</td>
+                        <td>{{ readings.heart_beat }}/min</td>
+                        <td>{{ readings.SpO2 }}%</td>
+                        <td>{{ readings.body_temperature }}°C</td>
+                    </tr>
+                    </tbody>
+                </table>
+                {% endfor %}
+            {% elif NoCurrent_Readings %}
+            <p>Your most recent health stats will be updated shortly...</p>
+
+            {% endif %}
             <br>
             <h3>See your stats in real time</h3>
 
@@ -227,7 +233,7 @@
             <div class="panel-body">
                 <div class="pName">
                     <p>{{ p.first_name }} {{ p.last_name }}</p>
-                    <p>{{ p.age }} years old</p>
+
                 </div>
                 <div class="pCity">
                     <p>{{ p.city }}</p>
